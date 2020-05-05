@@ -1,0 +1,2 @@
+rootProject.name='GeoFence_Prac'
+include ':app'
