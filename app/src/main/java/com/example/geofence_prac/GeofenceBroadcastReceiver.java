@@ -14,6 +14,7 @@ import java.util.List;
 
 public class GeofenceBroadcastReceiver extends BroadcastReceiver {
 
+    MapsActivity mapsActivity;
 
     private static final String TAG = "GeoBroadcastReceive";
 
@@ -22,6 +23,9 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
         // TODO: This method is called when the BroadcastReceiver is receiving
         // an Intent broadcast.
         //Toast.makeText(context, "Geofences triggered", Toast.LENGTH_SHORT).show();
+
+        String noti_title = mapsActivity.markerOptions.getTitle().toString();
+        String noti_body = mapsActivity.markerOptions.getSnippet().toString();
 
         NotificationHelper notificationHelper = new NotificationHelper(context);
 
@@ -46,7 +50,7 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
         switch (transitionType){
             case Geofence.GEOFENCE_TRANSITION_ENTER:
                 Toast.makeText(context, "GEOFENCE_TRANSITION_ENTER", Toast.LENGTH_SHORT).show();
-                notificationHelper.sendHighPriorityNotification("설정한 장소에 들어옴", "", MapsActivity.class);
+                notificationHelper.sendHighPriorityNotification(noti_title, noti_body, MapsActivity.class);
                 break;
             case Geofence.GEOFENCE_TRANSITION_DWELL:
                 Toast.makeText(context, "GEOFENCE_TRANSITION_DWELL", Toast.LENGTH_SHORT).show();

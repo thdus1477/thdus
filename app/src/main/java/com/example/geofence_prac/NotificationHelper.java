@@ -59,7 +59,6 @@ public class NotificationHelper extends ContextWrapper {
 
         NotificationManagerCompat.from(this).notify(new Random().nextInt(), notification);
 
-
     }
 
 }

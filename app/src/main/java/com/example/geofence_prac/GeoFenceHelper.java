@@ -22,7 +22,7 @@ public class GeoFenceHelper extends ContextWrapper {
 
     public GeofencingRequest getGeofencingRequest(Geofence geofence){
         return new GeofencingRequest.Builder()
-                .addGeofence(geofence)      //싱글 지오펜스? 옵션 더있었어 확인해
+                .addGeofence(geofence)      //싱글 지오펜스? 옵션 더있음 확인
                 .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
                 .build();
         }
@@ -33,7 +33,7 @@ public class GeoFenceHelper extends ContextWrapper {
                 .setCircularRegion(latLng.latitude,latLng.longitude,radius)
                 .setRequestId(ID)
                 .setTransitionTypes(transitionTypes)
-                .setLoiteringDelay(5000)    //들어가서 얼마나 알람 있게 할거냐고?
+                .setLoiteringDelay(5000)
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
                 .build();
     }
