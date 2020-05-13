@@ -48,9 +48,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //final TextView result_textView = (TextView) findViewById(R.id.result_textView); // 결과창
     //final EditText address_editText = (EditText)findViewById(R.id.address_editText);
 
-    Button Address_Num_Button, AddressMap_Button, Save_Button, RemoveMarker_Button;
-    TextView result_textView, textView_t, textView_l, textView4;
-    EditText address_editText, Todo_editText, Location_editText, todo_editText;
+    Button Address_Num_Button, AddressMap_Button, save_Button,
+            Save_Button, RemoveMarker_Button;
+    TextView result_textView,
+            textView_t, textView_l, textView4;
+    EditText address_editText, todo_editText,
+            Location_editText, Todo_editText;
 
     final Geocoder geocoder = new Geocoder(this);
 
@@ -80,6 +83,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        save_Button = findViewById(R.id.save_Button);
         Address_Num_Button = findViewById(R.id.Address_Num_Button);
         AddressMap_Button = findViewById(R.id.AddressMap_Button);
         result_textView = findViewById(R.id.result_textView);
@@ -91,7 +95,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         geoFenceHelper = new GeoFenceHelper(this);
 
 
-        //버튼처리----------------------------------
+        //지오코딩 버튼처리----------------------------------
         Address_Num_Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -155,8 +159,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }
         });
-        //버튼처리----------------------------------
+        //지오코딩 버튼처리----------------------------------
 
+        save_Button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(),AddLocationActivity.class);
+
+                String title = markerOptions.getTitle();
+                String address = markerOptions.getSnippet();
+
+                //String location_title = address_editText.getText().toString();
+                //String todo_snippet = todo_editText.getText().toString();
+
+                intent.putExtra("title", title);
+                intent.putExtra( "address", address);
+
+                startActivity(intent);
+            }
+        });
     }
 
 

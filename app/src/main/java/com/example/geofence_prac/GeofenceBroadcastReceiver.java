@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.util.Log;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.location.Geofence;
@@ -14,7 +15,7 @@ import java.util.List;
 
 public class GeofenceBroadcastReceiver extends BroadcastReceiver {
 
-    MapsActivity mapsActivity;
+    //MapsActivity mapsActivity;
 
     private static final String TAG = "GeoBroadcastReceive";
 
@@ -24,8 +25,11 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
         // an Intent broadcast.
         //Toast.makeText(context, "Geofences triggered", Toast.LENGTH_SHORT).show();
 
-        String noti_title = mapsActivity.markerOptions.getTitle().toString();
-        String noti_body = mapsActivity.markerOptions.getSnippet().toString();
+        //String noti_title = mapsActivity.markerOptions.getTitle().toString();
+        //String noti_body = mapsActivity.markerOptions.getSnippet().toString();
+
+        //String noti_title = mapsActivity.address_editText.getText().toString();
+        //String noti_body = mapsActivity.todo_editText.getText().toString();
 
         NotificationHelper notificationHelper = new NotificationHelper(context);
 
@@ -50,7 +54,7 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
         switch (transitionType){
             case Geofence.GEOFENCE_TRANSITION_ENTER:
                 Toast.makeText(context, "GEOFENCE_TRANSITION_ENTER", Toast.LENGTH_SHORT).show();
-                notificationHelper.sendHighPriorityNotification(noti_title, noti_body, MapsActivity.class);
+                notificationHelper.sendHighPriorityNotification("설정한 장소에 들어옴","할 일을 확인하세요", MapsActivity.class);
                 break;
             case Geofence.GEOFENCE_TRANSITION_DWELL:
                 Toast.makeText(context, "GEOFENCE_TRANSITION_DWELL", Toast.LENGTH_SHORT).show();
