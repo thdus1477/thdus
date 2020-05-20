@@ -13,7 +13,7 @@ import java.util.Currency;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    private static final String DATABASE_NAME = "memo";
+    private static final String DATABASE_NAME = "Geofencingmemo";
     private static final String TABLE_extra = "extra_todolist";
 
     DatabaseHelper(Context context){
@@ -40,20 +40,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(sql);
     }
 
-//    public ArrayList getAllText(){
-//        SQLiteDatabase sqLiteDatabase = this.getReadableDatabase();
-//        ArrayList<String> arrayList = new ArrayList<String>();
-//
-//        Cursor cursor = sqLiteDatabase.rawQuery("select * from " + TABLE_extra, null);
-//        cursor.moveToFirst();
-//
-//        while(!cursor.isAfterLast()){
-//            arrayList.add(cursor.getString(cursor.getColumnIndex("memo")));
-//            cursor.moveToNext();
-//        }
-//
-//        return arrayList;
-//    }
+    public void deleteMemo(int position){
+        String sql1 = "DELETE FROM "+TABLE_extra+" WHERE id = "+position+";";
+        db.execSQL(sql1);
+    }
 
     public ArrayList<GeofencingMemo> getAllText(){
         db = this.getReadableDatabase();

@@ -57,22 +57,6 @@ public class Extra_Todolist extends AppCompatActivity {
             }
         });
 
-        /*String title = "";
-        String address = "";
-
-        Bundle extras = getIntent().getExtras();
-
-        if (extras == null) {
-            title = "일정 추가 실패";
-        }
-        else {
-
-            title = extras.getString("title");
-            address = extras.getString("address");
-        }
-
-        String str = title + '\n' + address + '\n';
-        extra_todo_textView.setText(str); */
     }
 
     @Override
@@ -89,15 +73,7 @@ public class Extra_Todolist extends AppCompatActivity {
                 recyclerAdapter.notifyDataSetChanged();
 
                 databaseHelper.addMemo(memo);
-                /*
-                list_view_extraTodo.setAdapter(arrayAdapter);
 
-                arrayList.clear();
-                arrayList.addAll(databaseHelper.getAllText());
-                arrayAdapter.notifyDataSetChanged();
-                list_view_extraTodo.invalidateViews();
-                list_view_extraTodo.refreshDrawableState();
-                 */
             }
         }
     }
@@ -150,7 +126,24 @@ public class Extra_Todolist extends AppCompatActivity {
                 maintext=itemView.findViewById(R.id.PlaceTextView);
                 subtext=itemView.findViewById(R.id.ContentTextView);
 
+                itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {             //메모 리스트에서 원하는 아이템 길게 누르면 데이터 삭제
+                        int position = getAdapterPosition();
+                        int id = (int)maintext.getTag();
+
+                        if(position != RecyclerView.NO_POSITION){
+                            databaseHelper.deleteMemo(id);
+                            removeItem(position);
+                            notifyDataSetChanged();
+                        }
+
+                        return false;
+                    }
+                });
             }
+
+
         }
     }
 
