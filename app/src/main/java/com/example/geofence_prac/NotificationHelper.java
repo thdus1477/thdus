@@ -30,6 +30,8 @@ public class NotificationHelper extends ContextWrapper {
     private String CHANNEL_NAME = "High priority channel";
     private String CHANNEL_ID = "com.example.notifications" + CHANNEL_NAME;
 
+
+    //오레오 (API26)이상부터 채널을 추가해야 notification 사용 가능
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void createChannels() {
         NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH);
@@ -44,7 +46,8 @@ public class NotificationHelper extends ContextWrapper {
 
     public void sendHighPriorityNotification(String title, String body, Class activityName) {
 
-        Intent intent = new Intent(this, activityName);
+        //intent에서 notification클릭 시 보여줄 엑티비티 설정
+        Intent intent = new Intent(this, Extra_Todolist.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 267, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)

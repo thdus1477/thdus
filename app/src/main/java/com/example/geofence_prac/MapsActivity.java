@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -17,6 +18,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -40,7 +42,9 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener{
 
@@ -48,10 +52,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //final TextView result_textView = (TextView) findViewById(R.id.result_textView); // 결과창
     //final EditText address_editText = (EditText)findViewById(R.id.address_editText);
 
+    //public static Context mContext;
+
+    DatabaseHelper databaseHelper;
+
     Button Address_Num_Button, AddressMap_Button, save_Button,
             Save_Button, RemoveMarker_Button;
     TextView result_textView,
-            textView_t, textView_l, textView4;
+            textView_t, textView_l;
     EditText address_editText, todo_editText,
             Location_editText, Todo_editText;
 
@@ -83,8 +91,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        save_Button = findViewById(R.id.save_Button);
-        Address_Num_Button = findViewById(R.id.Address_Num_Button);
+        //mContext = this;
+
+        save_Button = findViewById(R.id.save_Button);       //저장버튼
+        //Address_Num_Button = findViewById(R.id.Address_Num_Button);
         AddressMap_Button = findViewById(R.id.AddressMap_Button);
         result_textView = findViewById(R.id.result_textView);
         address_editText = findViewById(R.id.address_editText);
@@ -95,8 +105,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         geoFenceHelper = new GeoFenceHelper(this);
 
 
+        //데베정의
+        databaseHelper = new DatabaseHelper(MapsActivity.this);
+
         //지오코딩 버튼처리----------------------------------
-        Address_Num_Button.setOnClickListener(new View.OnClickListener() {
+        /*Address_Num_Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 List<Address> list = null;
@@ -123,6 +136,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }
         });
+         */
 
         //주소를 지도에 표시
         AddressMap_Button.setOnClickListener(new View.OnClickListener() {
@@ -157,6 +171,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(searchLocation,16));
                     }
                 }
+
+                if(address_editText.length() != 0 && todo_editText.length() != 0){
+                }
+                else{
+                    Toast.makeText(MapsActivity.this,"장소와 할 일을 적어주세요",Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
         //지오코딩 버튼처리----------------------------------
@@ -164,22 +185,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         save_Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(),AddLocationActivity.class);
 
-                String title = markerOptions.getTitle();
-                String address = markerOptions.getSnippet();
+                addGeofence(markerOptions.getPosition(),GEOFENCE_RADIUS);
 
-                //String location_title = address_editText.getText().toString();
-                //String todo_snippet = todo_editText.getText().toString();
+                //String title = markerOptions.getTitle();
+                //String address = markerOptions.getSnippet();
 
-                intent.putExtra("title", title);
-                intent.putExtra( "address", address);
+                String location_title = address_editText.getText().toString();
+                String todo_snippet = todo_editText.getText().toString();
 
-                startActivity(intent);
+//                String sql_memo = location_title + " : " + todo_snippet;
+                /*if(!sql_memo.isEmpty()){
+                    databaseHelper.addMemo(sql_memo);
+                }
+*/
+                Intent intent = new Intent();
+                intent.putExtra("place",location_title);
+                intent.putExtra("contents",todo_snippet);
+                setResult(1,intent);
+                finish();
             }
         });
     }
-
 
     /**
      * Manipulates the map once available.
@@ -203,7 +230,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnMapLongClickListener(this);
     }
 
-    //permission 확인
+    //구글맵에서 현재위치 permission 확인
     private void enableUserLocation(){
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
                 PackageManager.PERMISSION_GRANTED){
@@ -245,35 +272,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    //구글맵 길게 클릭 시 마커표시
     @Override
     public void onMapLongClick(LatLng latLng){
-
-        if(Build.VERSION.SDK_INT >= 29){
-            //We need background permission
-            if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) ==
-                    PackageManager.PERMISSION_GRANTED){
-                tryAddingGeofence(latLng);
-            }else{
-                if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION)){
-                    //We show a dialog and ask for permission
-                    ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_BACKGROUND_LOCATION},BACKGROUND_LOCATION_ACCESS_REQUEST_CODE);
-                }else{
-                    ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_BACKGROUND_LOCATION},BACKGROUND_LOCATION_ACCESS_REQUEST_CODE);
-                }
-            }
-        }else{
-            tryAddingGeofence(latLng);
-        }
+        permission(latLng);
     }
 
-    //지도버튼 클릭시 지도길게 클릭과 동일한 퍼미션
+    //백그라운드 퍼미션, 지오펜스 추가
     public void permission(LatLng latLng){
-
         if(Build.VERSION.SDK_INT >= 29){
             //We need background permission
             if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) ==
                     PackageManager.PERMISSION_GRANTED){
-                tryAddingGeofence(latLng);
+                setMarker(latLng);
             }else{
                 if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION)){
                     //We show a dialog and ask for permission
@@ -283,18 +294,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }
         }else{
-            tryAddingGeofence(latLng);
+            setMarker(latLng);
         }
     }
 
-    private void tryAddingGeofence(LatLng latLng){
+    //마커세팅
+    private void setMarker(LatLng latLng){
         mMap.clear(); //이거하면 여러개 안되고 하나 누르면 다른거 지워져
         addMarker(latLng);
         addCircle(latLng, GEOFENCE_RADIUS);
-        addGeofence(latLng,GEOFENCE_RADIUS);
+        //addGeofence(latLng,GEOFENCE_RADIUS);
     }
 
-    private void addGeofence(LatLng latLng, float radius){
+    //지오펜스 개체 만들기
+    public void addGeofence(LatLng latLng, float radius){
         Geofence geofence = geoFenceHelper.getGeofence(GEOFENCE_ID, latLng, radius,
                 Geofence.GEOFENCE_TRANSITION_ENTER);
         //Geofence geofence = geoFenceHelper.getGeofence(GEOFENCE_ID, latLng, radius,
@@ -318,6 +331,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 });
     }
 
+    //마커 title,snippet 추가
     private void addMarker(final LatLng latLng){
         //String markerTitle = "클릭하여 할 일을 추가하세요";
         //String markerSnippet = "마커를 지울 수도 있습니다";
@@ -381,6 +395,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
+    //반경설정
     private void addCircle(LatLng latLng, float radius){
         CircleOptions circleOptions = new CircleOptions();
         circleOptions.center(latLng);

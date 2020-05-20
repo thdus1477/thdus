@@ -19,6 +19,7 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
 
     private static final String TAG = "GeoBroadcastReceive";
 
+    //지오펜싱 전환이 발생할 때 알림 게시 정의
     @Override
     public void onReceive(Context context, Intent intent) {
         // TODO: This method is called when the BroadcastReceiver is receiving
@@ -49,6 +50,7 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
         //This location is the location at the point of trigger and NOT the center of the geofence
         //Location location = geofencingEvent.getTriggeringLocation();
 
+        // 발생 이벤트 타입
         int transitionType = geofencingEvent.getGeofenceTransition();
 
         switch (transitionType){
