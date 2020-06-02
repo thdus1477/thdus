@@ -15,8 +15,6 @@ import java.util.List;
 
 public class GeofenceBroadcastReceiver extends BroadcastReceiver {
 
-    //MapsActivity mapsActivity;
-
     private static final String TAG = "GeoBroadcastReceive";
 
     //지오펜싱 전환이 발생할 때 알림 게시 정의
@@ -25,12 +23,6 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
         // TODO: This method is called when the BroadcastReceiver is receiving
         // an Intent broadcast.
         //Toast.makeText(context, "Geofences triggered", Toast.LENGTH_SHORT).show();
-
-        //String noti_title = mapsActivity.markerOptions.getTitle().toString();
-        //String noti_body = mapsActivity.markerOptions.getSnippet().toString();
-
-        //String noti_title = mapsActivity.address_editText.getText().toString();
-        //String noti_body = mapsActivity.todo_editText.getText().toString();
 
         NotificationHelper notificationHelper = new NotificationHelper(context);
 

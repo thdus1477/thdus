@@ -33,9 +33,6 @@ public class Extra_Todolist extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_extra__todolist);
 
-        //LatLng latLng = ((MapsActivity)MapsActivity.mContext).markerOptions.getPosition();
-        //((MapsActivity)MapsActivity.mContext).addGeofence(latLng,100);
-
         recyclerView=findViewById(R.id.recyclerview);
         LinearLayoutManager linearLayoutManager=new LinearLayoutManager(Extra_Todolist.this);
         recyclerView.setLayoutManager(linearLayoutManager);
