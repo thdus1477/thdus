@@ -25,19 +25,20 @@
 #### [Geofence & Geocoder]
 2-10. Google Map API   
 2-11. Geocoder   
-2-12. Geofence   
+2-12. Geofence  
+2-13. Geofence Notification   
 
 #### [환경설정]
-2-13. 소리 설정   
-2-14. 언어 설정   
+2-14. 소리 설정   
+2-15. 언어 설정   
 
 #### [디자인]
-2-15. Splash 화면   
-2-16. Nevigation Drawer   
-2-17. Tool Bar   
-2-18. 기종에 상관없는 디자인   
+2-16. Splash 화면   
+2-17. Nevigation Drawer   
+2-18. Tool Bar   
+2-19. 기종에 상관없는 디자인   
 
-## 3. 시장성
+## 3. 시장성, 수익화 방안
 
 ## 4. 참고자료
 
@@ -883,10 +884,25 @@ public class HouseTodolist extends AppCompatActivity implements BeaconCallback, 
     }
 
     //뒤로 가기 눌렀을 때도 정상 작동
+    //onResume함수와 동일 (블루투스 설정 창 이동만 제외)
     @Override
     protected void onPause() {
         super.onPause();
-        ```  //onResume()함수와 동일
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.ACCESS_FINE_LOCATION }, MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+            } else {
+                ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.ACCESS_FINE_LOCATION }, MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+            }
+        } else {
+            if (BluetoothAdapter.getDefaultAdapter().isEnabled()) {
+                // 콜백 등록
+                contextManager.setBeaconCallback(this);
+                contextManager.startLeScan();
+            } else {
+                contextManager.stopLeScan();
+            }
+        }
     }
 </code></pre>
 <img src = "https://user-images.githubusercontent.com/62948547/85103363-7a23b400-b241-11ea-8ff6-b4581ac63c38.png" width = "30%">
@@ -999,7 +1015,28 @@ private float GEOFENCE_RADIUS = 100;    //Geofence 반경
         mMap.addCircle(circleOptions);
     }
 </code>
-</pre>    
+</pre>   
+
+* 다음은 Map의 시작을 서울로 지정한 코드이다. 
+
+<pre><code>
+//맵 시작시 서울이 default
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        LatLng seoul = new LatLng(37.56, 126.97);
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(seoul,16));
+
+        enableUserLocation();
+
+        mMap.setOnMapLongClickListener(this);
+    }
+</code></pre>    
+
+* 협업이나 앱의 배포 시 GoogleMap이 로드되지 않는 현상이 발생하게 된다.   
+이는 release용 key를 받아 (debug)google_maps_api.xml이 아닌 (release)google_maps_api.xml에 추가하면 해결된다.
 
 ## Geocoder
 
@@ -1147,6 +1184,31 @@ public GeofencingRequest getGeofencingRequest(Geofence geofence){
  GEOFENCE_TRANSITION_DWELL는 사용자가 지오펜싱 내에서 정의된 시간 동안 정지할 때만 이벤트를 트리거한다.   
  To beacontinued앱에서는 설정한 장소에 들어갈 때 알림을 띄워주기 위하여 GEOFENCE_TRANSITION_ENTER만 사용한다.
  
+ * 다음은 Geofence error를 정의한 코드이다.   
+ Geofence에서 거부되거나, 등록 개수(최대 100개)를 넘어서거나 PendingIntent를 너무 많이 등록했을 경우로 나뉜다.   
+
+<pre><code>
+//지오펜싱 에러메세지
+    public String getErrorString(Exception e){
+        if(e instanceof ApiException){
+            ApiException apiException = (ApiException) e;
+            switch (apiException.getStatusCode()){
+                case GeofenceStatusCodes
+                        .GEOFENCE_NOT_AVAILABLE:
+                    return "GEOFNECE_NOT_AVAILABLE";    //지오펜스에서 거부됨
+                case GeofenceStatusCodes
+                        .GEOFENCE_TOO_MANY_GEOFENCES:
+                    return "GEOFNECE_TOO_MANY_GEOFENCE";    //지오펜스를 너무 많이 등록함
+                case GeofenceStatusCodes
+                        .GEOFENCE_TOO_MANY_PENDING_INTENTS:
+                    return "GEOFNECE_TOO_MANY_PENDING_INTENTS";     //펜딩인텐드를 너무 많이 등록함
+            }
+        }
+        return e.getLocalizedMessage();
+    }
+    
+</code></pre> 
+ 
 #### 지오펜싱 전환을 위한 Broadcast Receiver 정의
 
 * BroadcastReceiver는 지오펜싱으로 들어가는 또는 지오펜싱에서 나오는 전환과 같은 이벤트가 발생할 때 업데이트되어 장기 실행 백그라운드 작업을 시작할 수 있다.
@@ -1202,6 +1264,16 @@ public void permission(LatLng latLng){
 </code>
 </pre>
 
+* Map을 길게 눌렀을 경우에도 위에 언급한 permission()을 사용하여 permission확인 후 마커를 추가하도록 하였다.   
+
+<pre><code>
+//구글맵 길게 클릭 시 퍼미션 확인 후 마커표시
+    @Override
+    public void onMapLongClick(LatLng latLng){
+        permission(latLng);
+    }
+</code></pre>
+
 * ACCESS_FINE_LOCATION과 ACCESS_BACKGROUND_LOCATION에 대한 권한 요청 결과를 가져온다.   
 MapsActivity.java에 아래 코드를 추가한다.   
 <pre> <code>
@@ -1244,6 +1316,8 @@ private int BACKGROUND_LOCATION_ACCESS_REQUEST_CODE = 1002;
 MapsActivity.java에 아래의 코드를 추가한다.
 
 <pre><code>
+private GeoFenceHelper geoFenceHelper;
+
 private String GEOFENCE_ID = "JC_GEOFENCE_ID";    //Geofence ID
 
 //생략...
@@ -1330,6 +1404,58 @@ private static final String TAG = "GeoBroadcastReceive";
 </pre>
 
 앞에서 말했듯이 To beacontinued 앱에서는 GEOFENCE_TRANSITION_ENTER만 사용하기 때문에 case Geofence.GEOFENCE_TRANSITION_DWELL/Geofence.GEOFENCE_TRANSITION_EXIT는 사용하지 않아도 된다.   
+
+## Geofence Notification
+
+* 아래의 코드는 Geofence에서 Notification을 받기 위한 코드이다. NotificationHelper.java에 추가한다.   
+Notification에 대한 설명은 위에서 언급했으므로 생략한다.   
+
+<pre><code>
+    // 지오펜스 notification
+    private static final String TAG = "NotificationHelper";
+
+    public NotificationHelper(Context base) {
+        super(base);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            createChannels();
+        }
+    }
+
+    private String CHANNEL_NAME = "High priority channel";
+    private String CHANNEL_ID = "com.example.notifications" + CHANNEL_NAME;
+
+
+    //오레오 (API26)이상부터 채널을 추가해야 notification 사용 가능
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void createChannels() {
+        NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH);
+        notificationChannel.enableLights(true);
+        notificationChannel.enableVibration(true);
+        notificationChannel.setDescription("this is the description of the channel.");
+        notificationChannel.setLightColor(Color.RED);
+        notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.createNotificationChannel(notificationChannel);
+    }
+
+    public void sendHighPriorityNotification(String title, String body, Class activityName) {
+
+        //intent에서 notification클릭 시 보여줄 엑티비티 설정
+        Intent intent = new Intent(this, ExtraTodolist.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 267, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setStyle(new NotificationCompat.BigTextStyle().setSummaryText("summary").setBigContentTitle(title).bigText(body))
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+                .build();
+
+        NotificationManagerCompat.from(this).notify(new Random().nextInt(), notification);
+
+    }
+</code></pre>
 
 참고 : https://developer.android.com/training/location/geofencing?hl=ko#java
 
@@ -1665,7 +1791,7 @@ Text의 최소,최대 크기를 지정하고 Text가 차지하는 최소,최대 
 
 <hr>
 
-# 3. 시장성
+# 3. 시장성, 수익화 방안
 
 ### 비콘의 시장 규모 
 <img src="https://user-images.githubusercontent.com/62588817/85100759-e00d3d00-b23b-11ea-94cc-a8afc1da86aa.png" width="40%">
@@ -1695,13 +1821,34 @@ Text의 최소,최대 크기를 지정하고 Text가 차지하는 최소,최대 
 
   * 현재 SK planet은 차세대 커머스인 SYRUP service에 전사 역량을 집중하며 이와 동시에 O2O(Online to Offline) service를 선보이며 향후        SYRUP service 확대를 기대하고 있다. 
 
-### ToBecontinued 앱의 전망과 기대효과
+### To Becontinued 앱의 전망과 기대효과
 
 * 앱 사용자들로부터 10억 다운로드 및 129만개의 리뷰를 받은 구글 캘린더(Google Calender)는 매우 앱 서비스 기반 산업에서도 성공적인 사례이다. 특히, 일정 알림을 통해 팝업과 이메일 등으로 정보를 제공하며 또한 일정에 반영할 수 있도록 유용한 날씨 정보도 함께 제공하고 있다. 
 
-* 또한, 위치기반서비스에서 장소를 입력하면 해당 장소 사진도 함께 제공받을 수 있는 장점으로 인해 고객별점 4.5점 만점에 4.4점의 별점을 받았다. 이처럼 ToBecontinued 앱과 유사한 기능을 하는 ‘구글캘린더’와 비교했을 때, ToBecontinued의 차별성은 ‘Specific Alarm Service’이다. 특정 장소에 방문 시, 해당장소에서 사용자가 해야 하는 목록을 즉시 알림 해주는 서비스이기 때문이다. 
+* 또한, 위치기반서비스에서 장소를 입력하면 해당 장소 사진도 함께 제공받을 수 있는 장점으로 인해 고객별점 4.5점 만점에 4.4점의 별점을 받았다. 이처럼 To Becontinued 앱과 유사한 기능을 하는 ‘구글캘린더’와 비교했을 때, To Becontinued의 차별성은 ‘Specific Alarm Service’이다. 특정 장소에 방문 시, 해당장소에서 사용자가 해야 하는 목록을 즉시 알림 해주는 서비스이기 때문이다. 
 
- * 향후, ToBecontinued 기술개발의 경우 구글캘린더의 날씨 정보 뿐 아니라 이 프로젝트에서 사용한 비콘에 있는 응급 상황 시 EMERGENCY 버튼을 통해 SMS 및 구조 요청을 할 수 있는 기술개발도 가능하다. 현재 비콘 시장가격보다 더 저렴한 비콘을 사용하게 된다면 현재 비콘을 설치 한 4개의 장소보다 더 많은 장소에서 비콘 서비스를 고객들이 이용할 수 있는 산업적 기대효과도 있다.
+ * 향후, To Becontinued 기술개발의 경우 구글캘린더의 날씨 정보 뿐 아니라 이 프로젝트에서 사용한 비콘에 있는 응급 상황 시 EMERGENCY 버튼을 통해 SMS 및 구조 요청을 할 수 있는 기술개발도 가능하다. 현재 비콘 시장가격보다 더 저렴한 비콘을 사용하게 된다면 현재 비콘을 설치 한 4개의 장소보다 더 많은 장소에서 비콘 서비스를 고객들이 이용할 수 있는 산업적 기대효과도 있다.   
+ 
+### 수익화 방안
+
+#### 광고
+
+* 앞서 언급한 비콘서비스 기반의 예들(STARBUCKS / SYRUP)의 수익성의 경우와 마찬가지로, To Beacontinued 앱 또한 수익의 상당 부분을 광고 및 홍보 대행의 서비스를 통해 얻을 수 있다.   
+특히 문화 및 예술 관련 사업체나 뷰티/패션 등과 같이 홍보가 중요한 개인 및 기업체들은 모바일을 통한 홍보가 필수적이다. 이러한 조건은 To Beacontinued 앱의 경우, 앱 내에서의 알림을 통해 사용자들에게 홍보에 있어 거부감이 들지 않으면서 자연스러운 홍보 효과를 통해 깊게 사용자들의 일상 속에 침투할 수 있는 차별성을 가지고 있다. 
+구체적으로, 홍보 업체의 장소 및 이벤트들을 앱 사용 빈도와 함께 조정하며 홍보 횟수에 따라 업체 별 유료 금액을 조정 및 활용하여 수익 창출이 가능하다.   
+예를 들어, 비콘을 설치한 장소 중 하나인 집 밖의 메모를 "올리브○에서 ○○○사기"나 "○마트에서 장보기"라고 작성 시 특정 단어에 따라 알고리즘을 통해 해당 광고 영상이나 각종 이벤트들을 알림으로 보여주므로써 수익을 얻을 수 있다.   
+
+수익창출 기대효과를 가진 대표적인 4가지 사업체 별 광고 및 홍보 금액은 다음과 같다.   
+뷰티 산업체 : 10원/건 (광고시간 5초 이하 무료 / 5초 초과 시 5금액)   
+패션 산업체 : 10원/건 (광고시간 5초 이하 무료 / 5초 초과 시 5금액)   
+영화 및 문화 산업체 : 30원/건 (광고시간 15초 이하 무료 / 10초 초과 시 15금액)   
+게임 및 컨텐츠 산업체 : 30원/건 (광고시간 15초 이하 무료 / 10초 초과 시 15금액)    
+기타 산업체 : 20원/건 (광고시간 10초 이하 무료 / 10초 초과 시 10금액)
+
+* To Beacontinued앱 내에서도 수익을 얻을 수 있는 방안이 있다.   
+예를 들어, 추가 장소(사용자가 설정한 장소에 할 일을 알림으로 받기)에 메모를 추가 할 경우 메모 추가를 특정 개수만큼은 무료로 사용할 수 있고 특정 개수를 초과하는 경우 유료로 변환하는 방식이다.    
+ 
+이를 통해, To Beacontinued 앱을 통한 수익창출은 매우 증가할 것이며 각 사업체 별로 광고 및 홍보를 해주며 동시에 저희 앱 또한 홍보를 할 수 있는 효과가 있기에 향후 시장성 및 수익성에 대한 기대효과가 클 것으로 기대된다.    
  
  # 4. 참고자료
 
@@ -1725,5 +1872,10 @@ Text의 최소,최대 크기를 지정하고 Text가 차지하는 최소,최대 
     
 # 5. 동작 영상
 
-#### Beacon이 없는 경우 실행의 제한이 많아 영상을 추가하였다.
-* 전체적인 To Beacontinued 앱의 동작 영상이다.
+#### Beacon이 없는 경우 실행의 제한이 많아 동작 영상을 추가하였다.
+* 전체적인 To Beacontinued 앱의 동작 영상이다. 아래의 사진을 클릭하여 재생할 수 있다.
+
+[![Video Label](http://img.youtube.com/vi/Ac5DqnVF6M8/0.jpg)](https://youtu.be/Ac5DqnVF6M8)
+
+###### 0.75배속으로 재생을 권장한다.   (3:53 앱은 -> 앱을)   
+###### 알람이 울리고 클릭하여 해당 메모 페이지로 넘어간 후 Toolbar의 뒤로가기 버튼을 눌렀을 때 앱의 전 화면이 나타나는 것이 아니고 앱이 나가지는 것은 사용자가 다른 실행을 하고 있을 시 빠르게 메모만 확인하기 위함이다.
