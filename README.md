@@ -13,31 +13,37 @@
 2-3. 날짜, 시간 저장    
 
 #### [앱 연동]
+    (구혜은)
 2-4. everytime앱과 연동    
 
 #### [Alarm]
-2-5. Alarm Service   - 문지선   
-2-6. DatePicker   - 문지선   
-2-7. TimePicker   - 문지선   
+    (문지선)
+2-5. Alarm Service     
+2-6. DatePicker      
+2-7. TimePicker      
 
 #### [BEACON]
-2-8. BEACON Notification   - 정연서   
-2-9. 거리 인식   - 정연서
+    (정연서, 김소연)
+2-8. BEACON Notification      
+2-9. 거리 인식   
 
 #### [Geofence & Geocoder]
+    (김소연)
 2-10. Google Map API   
 2-11. Geocoder   
 2-12. Geofence  
 2-13. Geofence Notification   
 
 #### [환경설정]
+    (정연서, 문지선, 구혜은)
 2-14. 소리 설정   
-2-15. 언어 설정   - 정연서   
+2-15. 언어 설정     
 
 #### [디자인]
+    (정연서, 구혜은, 김소연)
 2-16. Splash 화면   
-2-17. Nevigation Drawer  - 정연서    
-2-18. Tool Bar   - 정연서   
+2-17. Nevigation Drawer     
+2-18. Tool Bar     
 2-19. 기종에 상관없는 디자인   
 
 ## 3. 시장성, 수익화 방안
