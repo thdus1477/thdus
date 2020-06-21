@@ -1,4 +1,3 @@
-# 최종 보고서
 # 목차
 
 ## 1. 앱 소개
@@ -35,12 +34,12 @@
 2-13. Geofence Notification   
 
 #### [환경설정]
-    (정연서, 문지선, 구혜은)
+    (문지선, 구혜은, 정연서)
 2-14. 소리 설정   
 2-15. 언어 설정     
 
 #### [디자인]
-    (정연서, 구혜은, 김소연)
+    (구혜은, 정연서, 김소연)
 2-16. Splash 화면   
 2-17. Nevigation Drawer     
 2-18. Tool Bar     
@@ -1044,7 +1043,13 @@ private float GEOFENCE_RADIUS = 100;    //Geofence 반경
 </code></pre>    
 
 * 협업이나 앱의 배포 시 GoogleMap이 로드되지 않는 현상이 발생하게 된다.   
-이는 release용 key를 받아 (debug)google_maps_api.xml이 아닌 (release)google_maps_api.xml에 추가하면 해결된다.
+이는 release용 key를 받아 (debug)google_maps_api.xml이 아닌 (release)google_maps_api.xml에 추가하면 해결된다.   
+
+* release용 key를 발급 받는 것은 다음의 link를 참고한다.
+https://developers.google.com/maps/documentation/android-sdk/get-api-key
+
+    * 이 프로젝트에선 release용 key를 받아도 GoogleMap이 로드되지 않는 현상이 발생해 이를 새로운 key를 생성하고 적용하여 해결하였다.   
+    * API를 발급받는 프로젝트를 새로 만드는 것도 방법이 될 수 있다.   
 
 ## Geocoder
 
