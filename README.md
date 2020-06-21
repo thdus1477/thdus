@@ -22,7 +22,7 @@
 2-7. TimePicker   
 
 #### [BEACON]
-    (***정연서***, 김소연)
+    ([정연서], 김소연)
 2-8. BEACON Notification   
 2-9. 거리 인식   
 
