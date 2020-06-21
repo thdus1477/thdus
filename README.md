@@ -1,3 +1,4 @@
+# 최종 보고서
 # 목차
 
 ## 1. 앱 소개
@@ -8,15 +9,15 @@
 #### [DATABASE]
 2-1. SQLite   - 정연서   
 2-2. 메모, 사진 저장   - 정연서   
-2-3. 날짜, 시간 저장     
+2-3. 날짜, 시간 저장     - 문지선
 
 #### [앱 연동]
 2-4. everytime앱과 연동    
 
 #### [Alarm]
-2-5. Alarm Service   
-2-6. DatePicker   
-2-7. TimePicker   
+2-5. Alarm Service   - 문지선   
+2-6. DatePicker   - 문지선   
+2-7. TimePicker   - 문지선   
 
 #### [BEACON]
 2-8. BEACON Notification   - 정연서   
@@ -1817,4 +1818,4 @@ Text의 최소,최대 크기를 지정하고 Text가 차지하는 최소,최대 
 <img src="https://user-images.githubusercontent.com/62587097/85141197-5bdda880-b281-11ea-9145-dda09394d18c.png" width="30%"><img src="https://user-images.githubusercontent.com/62588817/85103061-ea7e0580-b240-11ea-87f2-d0534bb43a34.png" width="30%">
 
   * 국내 기업 활용한 예를 들자면, SK planet의 SYRUP은 매장 안과 주위에 설치된 비콘을 통해 SYRUP이용자들의 스마트 폰을 인식하고 각종 마케팅     정보들을 전송하는 기술로 활용하고 있다.      
-    이러한 정보들을 활용하기 위해서는 블루투스(Blueto
+    이
