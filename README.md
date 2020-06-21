@@ -1515,6 +1515,12 @@ Preference에 Intent를 설정하면 Preference를 탭할 때마다 새 Fragment
 
 </code></pre>
 
+* 비콘으로 받는 알림이 아닌 Geofence를 통해 받는 알림은 늦을 수 있는데 그 이유는 다음과 같다.
+    * 지속적으로 위치 쿼리하는 형식이 아니라 대기 시간이 필요하다.   
+일반적인 대기 시간은 2 분 미만이며 장치가 움직일 때는 훨씬 적다.
+백그라운드 위치 제한 적용시 대기 시간은 평균 약 2~3분 정도이다.
+단말이 장시간 정지된 경우 대기 시간이 증가할 수 있다. (최대 6분)
+
 참고 : [Google Developers][googlelink]
 
 [googlelink]: https://developer.android.com/guide/topics/ui/settings/components-and-attributes?hl=ko"
