@@ -1675,7 +1675,7 @@ public class MenuActivity extends AppCompatActivity implements NavigationView.On
 < /menu>
 </code></pre>
 
-<img src = "https://user-images.githubusercontent.com/62948547/85105794-0afc8e80-b246-11ea-8b63-58c5f214724f.png" width = "30%">
+<img src = "https://user-images.githubusercontent.com/62948547/85105794-0afc8e80-b246-11ea-8b63-58c5f214724f.png" width = "30%"><img src = "https://user-images.githubusercontent.com/66317772/85261270-ddfae680-b4a6-11ea-851c-6356915f4b0c.png" 쟝소 = 30%">
 
 ## Tool Bar
 
