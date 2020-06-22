@@ -1612,7 +1612,7 @@ background화면으로 drawable 폴더 내에서 배경을 만든 이미지 파�
  
 * 구현화면
 
-<img src="https://user-images.githubusercontent.com/62587097/84872825-56cffc00-b0bd-11ea-9916-f687e442c336.png" width="30%">
+<img src="https://user-images.githubusercontent.com/62587097/84872825-56cffc00-b0bd-11ea-9916-f687e442c336.png" width="30%"><img src = "https://user-images.githubusercontent.com/66317772/85261270-ddfae680-b4a6-11ea-851c-6356915f4b0c.png" width = 30%">
 
 ## Nevigation Drawer
 * 메인 화면 Menuactivity는 Navigation Drawer Activity를 활용하였고 2개의 Fragment를 추가한다.
@@ -1675,7 +1675,7 @@ public class MenuActivity extends AppCompatActivity implements NavigationView.On
 < /menu>
 </code></pre>
 
-<img src = "https://user-images.githubusercontent.com/62948547/85105794-0afc8e80-b246-11ea-8b63-58c5f214724f.png" width = "30%"><img src = "https://user-images.githubusercontent.com/66317772/85261270-ddfae680-b4a6-11ea-851c-6356915f4b0c.png" 쟝소 = 30%">
+<img src = "https://user-images.githubusercontent.com/62948547/85105794-0afc8e80-b246-11ea-8b63-58c5f214724f.png" width = "30%">
 
 ## Tool Bar
 
