@@ -1610,7 +1610,7 @@ background화면으로 drawable 폴더 내에서 배경을 만든 이미지 파�
  ```
  </pre></code>
  
-* 구현화면
+* 구현화면(시작 화면과 2초 뒤 화면)
 
 <img src="https://user-images.githubusercontent.com/62587097/84872825-56cffc00-b0bd-11ea-9916-f687e442c336.png" width="30%"><img src="https://user-images.githubusercontent.com/66317772/85261542-3f22ba00-b4a7-11ea-91b2-73b39deda1d9.png" width="30%">
 
